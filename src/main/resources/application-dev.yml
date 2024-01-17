@@ -9,7 +9,7 @@ logging:
 
 spring:
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
     topic:
       start-saga: start-saga
       notify-ending: notify-ending
@@ -20,7 +20,7 @@ spring:
   data:
     mongodb:
       database: admin
-      uri: mongodb://admin:admin@localhost:27017/?maxPoolSize=10
+      uri: ${MONGO_DB_URL:mongodb://admin:admin@localhost:27017/?maxPoolSize=10}
 
   banner:
     location: banner.txt

@@ -1,0 +1,10 @@
+server:
+  port: 3000
+
+spring:
+  data:
+    mongodb:
+      database: admin
+      uri: mongodb://admin:admin@localhost:27017/?maxPoolSize=10
+  banner:
+    location: banner.txt

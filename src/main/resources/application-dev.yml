@@ -1,7 +1,23 @@
 server:
   port: 8083
 
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF
+
 spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic:
+      orchestrator: orchestrator
+      payment-success: payment-success
+      payment-failure: payment-failure
+    consumer:
+      group-id: payment-group
+      auto-offset-reset: latest
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5433/payment-db
@@ -9,11 +25,10 @@ spring:
     password: postgres
     hikari:
       maximum-pool-size: 10
+
   jpa:
     hibernate:
       ddl-auto: create-drop
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   banner:
     location: banner.txt

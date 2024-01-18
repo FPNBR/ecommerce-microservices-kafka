@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${spring.kafka.topic.orchestrator}")
     private String orchestratorTopic;

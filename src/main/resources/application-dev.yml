@@ -19,8 +19,8 @@ spring:
 
   data:
     mongodb:
-      database: admin
-      uri: ${MONGO_DB_URL:mongodb://admin:admin@localhost:27017/?maxPoolSize=10}
+      database: order-db
+      uri: ${MONGO_DB_URI:mongodb://admin:admin@order-db:27017/?maxPoolSize=10}
 
   banner:
     location: banner.txt

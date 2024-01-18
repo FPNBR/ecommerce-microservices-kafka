@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SagaOrchestratorProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public void sendEvent(String payload, String topic) {
         try {

@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderProductsDTO {
 
-    private ProductDTO productDTO;
+    private ProductDTO product;
     private Long quantity;
 }

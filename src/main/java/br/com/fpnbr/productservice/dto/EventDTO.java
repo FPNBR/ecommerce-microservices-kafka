@@ -21,6 +21,6 @@ public class EventDTO {
     private OrderDTO payload;
     private String source;
     private SagaStatusEnum status;
-    private List<HistoryDTO> eventHistoryDTO;
+    private List<HistoryDTO> eventHistory;
     private LocalDateTime createdAt;
 }

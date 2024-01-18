@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SagaProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${spring.kafka.topic.start-saga}")
     private String startSagaTopic;

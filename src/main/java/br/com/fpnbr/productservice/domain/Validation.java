@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "validation")
+@Table(name = "t_validation")
 @Entity
 public class Validation {
 

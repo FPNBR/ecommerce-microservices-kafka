@@ -35,7 +35,7 @@ public class Payment {
     private LocalDateTime updatedAt;
 
     @Column(name = "total_items", nullable = false)
-    private Integer totalItems;
+    private Long totalItems;
 
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;

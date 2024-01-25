@@ -55,7 +55,7 @@ mvn spring-boot:run -Dspring.profiles.active=dev -DskipTests
 
 * Order-Service: 3000
 * Orchestrator-Service: 8080
-* Product-Validation-Service: 8090
+* Product-Service: 8090
 * Payment-Service: 8091
 * Inventory-Service: 8092
 * Apache Kafka: 9092

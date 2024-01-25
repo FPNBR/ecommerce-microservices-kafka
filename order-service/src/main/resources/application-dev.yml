@@ -1,0 +1,28 @@
+server:
+  port: 3000
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    org:
+      apache:
+        kafka: OFF
+
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
+    topic:
+      start-saga: start-saga
+      notify-ending: notify-ending
+    consumer:
+      group-id: order-group
+      auto-offset-reset: latest
+
+  data:
+    mongodb:
+      database: order-db
+      uri: ${MONGO_DB_URI:mongodb://admin:admin@localhost:27017/?maxPoolSize=10}
+
+  banner:
+    location: banner.txt

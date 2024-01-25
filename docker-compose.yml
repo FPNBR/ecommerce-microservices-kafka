@@ -1,0 +1,199 @@
+version: '3'
+
+services:
+  order-db:
+    image: mongo:latest
+    container_name: order-db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_order_data:/data/db
+    networks:
+      - orchestrator-saga
+
+  product-db:
+    image: postgres:latest
+    container_name: product-db
+    restart: always
+    environment:
+      POSTGRES_DB: product-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_product_data:/var/lib/postgresql/data
+    networks:
+      - orchestrator-saga
+
+  payment-db:
+    image: postgres:latest
+    container_name: payment-db
+    restart: always
+    environment:
+      POSTGRES_DB: payment-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_payment_data:/var/lib/postgresql/data
+    networks:
+      - orchestrator-saga
+
+  inventory-db:
+    image: postgres:latest
+    container_name: inventory-db
+    restart: always
+    environment:
+      POSTGRES_DB: inventory-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_inventory_data:/var/lib/postgresql/data
+    networks:
+      - orchestrator-saga
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: INTERNAL://:29092,CONTROLLER://kafka:29093,EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_RESTART_ATTEMPTS: 10
+      KAFKA_RESTART_DELAY: 5
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      CLUSTER_ID: mF3oJYsGQoxDevTwATpdUw==
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: false
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - orchestrator-saga
+
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:latest
+    container_name: redpanda-console
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["kafka:29092"]
+    ports:
+      - "8081:8080"
+    networks:
+      - orchestrator-saga
+    depends_on:
+      - kafka
+
+  order-service:
+    build: './order-service'
+    container_name: order-service
+    depends_on:
+      - order-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - MONGO_DB_URI=mongodb://admin:admin@order-db:27017/?maxPoolSize=10
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "3000:3000"
+
+  orchestrator-service:
+    build: './orchestrator-service'
+    container_name: orchestrator-service
+    depends_on:
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8080:8080"
+
+  product-service:
+    build: './product-service'
+    container_name: product-service
+    depends_on:
+      - product-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - DB_HOST=product-db
+      - DB_PORT=5432
+      - DB_NAME=product-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8082:8082"
+
+  payment-service:
+    build: './payment-service'
+    container_name: payment-service
+    depends_on:
+      - payment-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - DB_HOST=payment-db
+      - DB_PORT=5432
+      - DB_NAME=payment-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8083:8083"
+
+  inventory-service:
+    build: './inventory-service'
+    container_name: inventory-service
+    depends_on:
+      - inventory-db
+      - kafka
+    networks:
+      - orchestrator-saga
+    environment:
+      - KAFKA_BROKER=kafka:29092
+      - DB_HOST=inventory-db
+      - DB_PORT=5432
+      - DB_NAME=inventory-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8084:8084"
+
+volumes:
+  mongo_order_data:
+  postgres_product_data:
+  postgres_payment_data:
+  postgres_inventory_data:
+  kafka_data:
+
+networks:
+    orchestrator-saga:
+      driver: bridge

@@ -2,7 +2,7 @@
 
 # Sobre o projeto
 
-Este projeto foi desenvolvido com base no curso Arquitetura de Microsserviços: Padrão Saga Orquestrado da plataforma de ensino Alura, ministrado pelo Victor Hugo Negrisoli.
+Este projeto foi desenvolvido com base no curso Arquitetura de Microsserviços: Padrão Saga Orquestrado da plataforma de ensino Udemy, ministrado pelo Victor Hugo Negrisoli.
 
 ## Tecnologias utilizadas
 

@@ -6,7 +6,7 @@ Este projeto foi desenvolvido com base no curso Arquitetura de Microsserviços: 
 
 ## Tecnologias utilizadas
 
-* **Java 17**
+* **Java 21**
 * **Spring Boot 3**
 * **Apache Kafka com KRaft**
 * **API REST**
